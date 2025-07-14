@@ -20,6 +20,10 @@ app.post("/create-payment-intent", async (req, res) => {
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency,
+      description: "Premium Access for ApnaMall", // ✅ Added description
+      automatic_payment_methods: {
+        enabled: true, // ✅ Enables Card, UPI, NetBanking, etc.
+      },
     });
 
     res.send({
