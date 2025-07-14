@@ -15,14 +15,14 @@ app.get("/", (req, res) => {
 
 app.post("/create-payment-intent", async (req, res) => {
   try {
-    const { amount, currency } = req.body;
+    const { amount, currency, description } = req.body;
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency,
-      description: "Premium Access for ApnaMall", // ✅ Added description
+      description: description || "ApnaMall Payment", // 👈 fallback if not passed
       automatic_payment_methods: {
-        enabled: true, // ✅ Enables Card, UPI, NetBanking, etc.
+        enabled: true,
       },
     });
 
