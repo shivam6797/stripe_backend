@@ -15,12 +15,27 @@ app.get("/", (req, res) => {
 
 app.post("/create-payment-intent", async (req, res) => {
   try {
-    const { amount, currency, description } = req.body;
+    const { amount, currency, description, customerDetails } = req.body;
 
+    // ✅ Step 1: Create Customer with name + address (needed for Indian export regulations)
+    const customer = await stripe.customers.create({
+      name: customerDetails.name,
+      email: customerDetails.email,
+      address: {
+        line1: customerDetails.address.line1,
+        city: customerDetails.address.city,
+        state: customerDetails.address.state,
+        postal_code: customerDetails.address.postalCode,
+        country: customerDetails.address.country,
+      },
+    });
+
+    // ✅ Step 2: Create Payment Intent with that customer
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
       currency,
-      description: description || "ApnaMall Payment", // 👈 fallback if not passed
+      description,
+      customer: customer.id,
       automatic_payment_methods: {
         enabled: true,
       },
