@@ -26,8 +26,8 @@ app.post("/create-payment-intent", async (req, res) => {
         city: customerDetails.address.city,
         state: customerDetails.address.state,
         postal_code: customerDetails.address.postalCode,
-        country: customerDetails.address.country,
-      },
+        country: customerDetails.address.country
+      }
     });
 
     // ✅ Step 2: Create Payment Intent with that customer
@@ -37,12 +37,16 @@ app.post("/create-payment-intent", async (req, res) => {
       description,
       customer: customer.id,
       automatic_payment_methods: {
-        enabled: true,
+        enabled: true
       },
+      metadata: {
+        phone: customerDetails.phone || "N/A",
+        summary: description || "No summary"
+      }
     });
 
     res.send({
-      clientSecret: paymentIntent.client_secret,
+      clientSecret: paymentIntent.client_secret
     });
   } catch (error) {
     res.status(500).send({ error: error.message });
